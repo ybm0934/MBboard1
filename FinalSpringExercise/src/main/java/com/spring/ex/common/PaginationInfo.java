@@ -55,22 +55,22 @@ public class PaginationInfo {
 	}
 
 	public int getLastPage() {
-		lastPage = firstPage + (blockSize - 1);
-		if (lastPage > totalPage)
-			lastPage = totalPage;
+		lastPage = getFirstPage() + (blockSize - 1);
+		if (lastPage > getTotalPage())
+			lastPage = getTotalPage();
 		return lastPage;
 	}
 
 	public int getFirstRecordIndex() {
-		firstRecordIndex = (currentPage - 1) * pageSize;
+		firstRecordIndex = (getCurrentPage() - 1) * getPageSize();
 		return firstRecordIndex;
 	}
 
 	public int getLastRecordIndex() {
-		lastRecordIndex = currentPage * pageSize;
+		lastRecordIndex = getCurrentPage() * getPageSize();
 		return lastRecordIndex;
 	}
-
+	
 	@Override
 	public String toString() {
 		return "PaginationInfo [currentPage=" + currentPage + ", pageSize=" + pageSize + ", blockSize=" + blockSize
