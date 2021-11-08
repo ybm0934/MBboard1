@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="config.mybatis.mapper.board">
+	<insert id="insertBoard" parameterType="BoardVO">
+		INSERT INTO board
+		VALUES (board_seq.NEXTVAL, #{name}, #{pwd}, #{title}, #{content}, DEFAULT, DEFAULT)
+	</insert>
+	<select id="getTotalRecord" parameterType="SearchVO" resultType="Integer">
+		SELECT COUNT(*) FROM board
+		<if test="keyword != null and keyword != ''">
+			WHERE #{category} LIKE '%' || #{keyword} || '%'
+		</if>
+	</select>
+	<select id="getListBoard" parameterType="SearchVO" resultType="BoardVO">
+		SELECT *
+		  FROM (SELECT ROWNUM rnum, A.*
+		          FROM (  SELECT *
+		                    FROM board
+		               <if test="keyword != null and keyword != ''">
+		                   WHERE #{category} LIKE '%' || #{keyword} || '%'
+		               </if>
+		                ORDER BY NO DESC) A)
+		<![CDATA[
+		 WHERE rnum > #{firstRecordIndex} AND rnum <= #{lastRecordIndex}
+		]]>
+	</select>
+	<select id="getBoard" parameterType="Integer" resultType="BoardVO">
+		SELECT * FROM board WHERE NO = #{no}
+	</select>
+	<update id="updateBoard" parameterType="Integer">
+		UPDATE board
+		set NAME = #{name}, pwd = #{pwd}, title = #{title}, CONTENT = #{content}, files = #{files} 
+		WHERE NO = #{no}
+	</update>
+	<delete id="deleteBoard" parameterType="Integer">
+		DELETE FROM board WHERE NO = #{no}
+	</delete>
+</mapper>

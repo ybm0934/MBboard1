@@ -1,0 +1,20 @@
+--게시판 테이블, 시퀀스
+
+DROP TABLE board;
+CREATE TABLE board(
+    NO number PRIMARY KEY,
+    NAME varchar2(20),
+    pwd varchar2(20),
+    title varchar2(50),
+    CONTENT clob,
+    files char DEFAULT 'N',
+    regdate date DEFAULT SYSDATE
+);
+
+DROP SEQUENCE board_seq;
+CREATE SEQUENCE board_seq
+start WITH 1
+INCREMENT BY 1
+NOCACHE;
+
+
