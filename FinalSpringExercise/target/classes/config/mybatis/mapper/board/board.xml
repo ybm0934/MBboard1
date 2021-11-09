@@ -10,7 +10,7 @@
 	<select id="getTotalRecord" parameterType="SearchVO" resultType="Integer">
 		SELECT COUNT(*) FROM board
 		<if test="keyword != null and keyword != ''">
-			WHERE #{category} LIKE '%' || #{keyword} || '%'
+		WHERE ${category} LIKE '%' || #{keyword} || '%'
 		</if>
 	</select>
 	<select id="getListBoard" parameterType="SearchVO" resultType="BoardVO">
@@ -19,7 +19,7 @@
 		          FROM (  SELECT *
 		                    FROM board
 		               <if test="keyword != null and keyword != ''">
-		                   WHERE #{category} LIKE '%' || #{keyword} || '%'
+		                   WHERE ${category} LIKE '%' || #{keyword} || '%'
 		               </if>
 		                ORDER BY NO DESC) A)
 		<![CDATA[

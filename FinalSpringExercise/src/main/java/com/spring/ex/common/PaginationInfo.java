@@ -62,15 +62,15 @@ public class PaginationInfo {
 	}
 
 	public int getFirstRecordIndex() {
-		firstRecordIndex = (getCurrentPage() - 1) * getPageSize();
+		firstRecordIndex = (currentPage - 1) * pageSize;
 		return firstRecordIndex;
 	}
 
 	public int getLastRecordIndex() {
-		lastRecordIndex = getCurrentPage() * getPageSize();
+		lastRecordIndex = currentPage * pageSize;
 		return lastRecordIndex;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "PaginationInfo [currentPage=" + currentPage + ", pageSize=" + pageSize + ", blockSize=" + blockSize

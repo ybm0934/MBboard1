@@ -5,8 +5,8 @@ public class SearchVO {
 	private String category;
 	private String keyword;
 	private int currentPage = 1;
-	private int pageSize = 10;
-	private int blockSize = 10;
+	private int pageSize = Utility.PAGESIZE;
+	private int blockSize = Utility.BLOCKSIZE;
 	private int firstRecordIndex;
 	private int lastRecordIndex;
 

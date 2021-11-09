@@ -10,27 +10,27 @@
 	<link rel="stylesheet" href="<%=request.getContextPath() %>/css/board/boardList.css">
 	<script>
 		function firstPage() {
-			document.boardList.currentPage = 1;
+			document.boardList.currentPage.value = 1;
 			document.boardList.submit();
 		}
 		
 		function lastPage() {
-			document.boardList.currentPage = ${pagingInfo.lastPage};
+			document.boardList.currentPage.value = ${pagingInfo.totalPage};
 			document.boardList.submit();
 		}
 		
 		function prevPage() {
-			document.boardList.currentPage = ${pagingInfo.firstPage - 1};
+			document.boardList.currentPage.value = ${pagingInfo.firstPage - 1};
 			document.boardList.submit();
 		}
 		
 		function nextPage() {
-			document.boardList.currentPage = ${pagingInfo.lastPage + 1};
+			document.boardList.currentPage.value = ${pagingInfo.lastPage + 1};
 			document.boardList.submit();
 		}
 		
 		function goPage(i) {
-			document.boardList.currentPage = i;
+			document.boardList.currentPage.value = i;
 			document.boardList.submit();
 		}
 	</script>
@@ -84,7 +84,7 @@
         </c:if>
         <c:forEach var="i" begin="${pagingInfo.firstPage }" end="${pagingInfo.lastPage }">
         <c:if test="${i != pagingInfo.currentPage }">
-        	<a href="#" onclick="goPage('${i}');"></a>
+        	<a href="#" onclick="goPage('${i}');">${i }</a>
         </c:if>
         <c:if test="${i == pagingInfo.currentPage }">
         	<span>${i }</span>
@@ -99,13 +99,13 @@
         <form name="search" method="post" action="boardList.do">
             <select name="category">
                 <option value="title" 
-                <c:if test="${category == title }">selected</c:if>>제목</option>
+                <c:if test="${searchVo.category == 'title' }">selected</c:if>>제목</option>
                 <option value="content"
-                <c:if test="${category == content }">selected</c:if>>내용</option>
+                <c:if test="${searchVo.category == 'content' }">selected</c:if>>내용</option>
                 <option value="name"
-                <c:if test="${category == name }">selected</c:if>>작성자</option>
+                <c:if test="${searchVo.category == 'name' }">selected</c:if>>작성자</option>
             </select>
-            <input type="text" name="keyword" class="box" value="${keyword }">
+            <input type="text" name="keyword" class="box" value="${searchVo.keyword }">
             <input type="submit" class="btn" value="검색">
         </form>
     </div>
