@@ -9,6 +9,7 @@
 		<setting name="mapUnderscoreToCamelCase" value="true" />
 	</settings>
 	<mappers>
-		<mapper resource="/config/mybatis/mapper/board/board.xml" />
+		<mapper resource="/config/mybatis/mapper/board.xml" />
+		<mapper resource="/config/mybatis/mapper/disk.xml" />
 	</mappers>
 </configuration>
