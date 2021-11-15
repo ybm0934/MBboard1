@@ -38,5 +38,31 @@ public class BoardListController {
 
 		return "board/boardList";
 	}
+	
+	/* Ajax 이용 */
+	@RequestMapping("/ajaxTest.do")
+	public String ajaxTest() {
+		return "ajaxTest";
+	}
+	
+	@RequestMapping("/boardList2.do")
+	public String getBoardList2(@ModelAttribute SearchVO searchVo, Model model) {
+		PaginationInfo pagingInfo = new PaginationInfo();
+		pagingInfo.setCurrentPage(searchVo.getCurrentPage());
+		pagingInfo.setPageSize(searchVo.getPageSize());
+		pagingInfo.setBlockSize(searchVo.getBlockSize());
+		int totalRecord = boardService.getTotalRecord(searchVo);
+		pagingInfo.setTotalRecord(totalRecord);
+		searchVo.setFirstRecordIndex(pagingInfo.getFirstRecordIndex());
+		searchVo.setLastRecordIndex(pagingInfo.getLastRecordIndex());
+		
+		List<BoardVO> list = boardService.getListBoard(searchVo);
+		
+		model.addAttribute("list", list);
+		model.addAttribute("pagingInfo", pagingInfo);
+		model.addAttribute("searchVo", searchVo);
+		
+		return "boardJSON";
+	}
 
 }
