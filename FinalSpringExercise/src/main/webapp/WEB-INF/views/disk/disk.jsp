@@ -7,7 +7,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>Web Folder</title>
+    <title>::YBM Web Folder::</title>
     <link rel="stylesheet" href="${path }/css/disk/disk.css">
     <script src="${path }/lib/jquery-3.6.0.min.js"></script>
     <script>
@@ -23,6 +23,17 @@
     			}
     		});
     		
+    		// 폴더 업로드
+    		$('#folder').change(function(){
+    			$('form[name=folderUpload]').submit();
+    		});
+    		
+    		// 폴더 생성
+    		$('#mkBtn').click(function(){
+    			$('input[name=path]').val('${inPath}');
+    			$('form[name=makeFolder]').submit();
+    		});
+    		
     		// 전체 선택
     		$('#allCheck').click(function(){
     			if($('#allCheck').prop('checked')) {
@@ -32,34 +43,70 @@
     			}
     		});
     		
-    		// 파일 선택 시 이벤트
+    		// 체크박스 체크 시 이벤트
     		$('input[type=checkBox]').change(function(){
-    			const boxLen = $('input[name=checkBox]').length;
-    			const checkLen = $('input[name=checkBox]:checked').length;
+    			const ckLen = $('input[name=checkBox]').length;
+    			const ckedLen = $('input[name=checkBox]:checked').length;
     			
-    			if(boxLen != checkLen) {
-    				$('#allCheck').prop('checked', false);
-    			}else {
+    			// 전체 선택
+    			if(ckLen == ckedLen) {
     				$('#allCheck').prop('checked', true);
+    			}else {
+    				$('#allCheck').prop('checked', false);
     			}
     			
-    			if(checkLen > 0) {
-    				$('#statusDiv').show();
+    			// 체크 박스 목록 불러오기
+    			$('.checkBox').each(function(){
+	    			const id = $(this).attr('id');
+	    			const no = id.substring('check'.length);
+	    			
+	    			// 체크 박스 선택 시 체크 박스 표시 및 배경 색 변경
+	    			if($('#' + id).prop('checked') == true) {
+	    				$('#checkDiv' + no).css('visibility', 'visible');
+	    				$('#contentAttr' + no).css({'background-color':'#80c3fd', 'border-color':'#2f9dfc'});
+	    			}else {
+		    			$('#checkDiv' + no).css('visibility', 'hidden');
+	    				$('#contentAttr' + no).css({'background-color':'white', 'border-color':'#80c3fd'});
+	    			}
+    			});
+    			
+    			// 체크 박스 선택 시 메뉴 변경
+    			if(ckedLen > 0) {
     				$('form[name=fileUpload]').hide();
+    				$('form[name=folderUpload]').hide();
     				$('form[name=fileDownload]').show();
     				$('form[name=makeFolder]').hide();
     				$('form[name=deleteFile]').show();
-    				$('.checkDiv').css('visibility', 'visible');
-    				$('#statusSpn1').html(checkLen);
+    				$('#statusDiv').show();
+    				$('#statusSpn1').html(ckedLen);
     			}else {
     				$('form[name=fileDownload]').hide();
+    				$('form[name=folderUpload]').show();
     				$('form[name=fileUpload]').show();
     				$('form[name=deleteFile]').hide();
     				$('form[name=makeFolder]').show();
     				$('#statusDiv').hide();
-    				$('.checkDiv').css('visibility', 'hidden');
     				$('#statusSpn1').html(0);
     			}
+    		});
+    		
+    		// 컨텐츠 div 목록 불러오기
+    		$('.contentAttr').each(function(){
+    			const id = $(this).attr('id');
+    			const no = id.substring('contentAttr'.length);
+    			
+    			// 체크 박스 선택이 안 되어 있을 시에만 hover 이벤트 발생
+	    		$('#' + id).hover(function(){
+	    			if($('#check' + no).prop('checked') == false) {
+		    			$('#' + id).css({'background-color':'#80c3fd', 'border-color':'#2f9dfc'});
+		    			$('#checkDiv' + no).css('visibility', 'visible');
+	    			}
+	    		}, function(){
+	    			if($('#check' + no).prop('checked') == false) {
+		    			$('#' + id).css({'background-color':'white', 'border-color':'#80c3fd'});
+		    			$('#checkDiv' + no).css('visibility', 'hidden');
+	    			}
+	    		});
     		});
     		
     		// 파일 삭제
@@ -70,7 +117,7 @@
 						arr.push($(this).val());
 					});
 					
-					const div = arr.join(':');
+					const div = arr.join('>');
 					$('input[name=checked]').val(div);
 					if(arr.length != 0) {
 						$('form[name=deleteFile]').submit();
@@ -78,31 +125,23 @@
     			}
     		});
     		
-    		// 선택 다운로드
+    		// 선택 개별 다운로드
     		$('#downBtn').click(function(){
     			$('.checkBox:checked').each(function(i){
 					setTimeout(function() {
-	    				const frm = $('<iframe src="fileDownload.do?fileName=' + $('.checkBox:checked').eq(i).val() + '" style="display: none;" />');
+	    				const frm = $('<iframe src="fileDownload.do?path=' + $('.checkBox:checked').eq(i).val() + '" style="display: none;" />');
 	    				frm.appendTo('body');
-					}, 200 * (i + 1));
+					}, 300 * (i + 1));
     			});
 				$('iframe').remove();
     		});
-    		
-    		// 폴더 경로 디렉토리
-    		let inPath = '${inPath }';
-    		const parentPath = '${parentPath }';
-    		const parentShortPath = '${parentShortPath }';
-    		if(parentShortPath != '') {
-	    		//const splitPath = parentShortPath.split('/');
-	   			$.each(splitPath, function(index, item) {
-	   				inPath = inPath.substring(0, inPath.lastIndexOf('/'));
-	    			//const aTag = '<a href="#" onclick="upFolder(' + "'" + inPath + "'" + ');">' + item + '</a>';
-	    			$('#pathDiv').append(' &gt; ' + aTag);
-	    			if(index == splitPath.length - 2) return false;
-	   			});
-    		}
     	});
+    	
+    	// 개별 다운로드
+   		function download(path) {
+ 			document.fileDownload.path.value = path;
+ 			document.fileDownload.submit();
+   		}
     	
     	// 폴더 안으로 이동
     	function inFolder(folderName, type, path, upPath) {
@@ -117,21 +156,18 @@
     		document.enterFolder.inPath.value = upPath;
     		document.enterFolder.submit();
     	}
-    	
-    	// 개별 다운로드
-   		function download(fileName, type) {
-   			if(type == 'file') {
-   				document.fileDownload.fileName.value = fileName;
-   				document.fileDownload.submit();
-   			}
-   		}
     </script>
 </head>
-<body>
+<body oncontextmenu="return false" ondragstart="return false" onselectstart="return false">
+<div id="titleDiv">
+	<a href="disk.do">Web Folder</a>
+</div>
 <div id="wrap">
-    <div id="titleDiv">
-        <h1>Web Folder</h1>
-    </div>
+	<div id="loginDiv">
+		<a href="login.do">로그인</a>
+		 | 
+		<a href="register.do">회원 가입</a>
+	</div>
     <div id="menuDiv">
     	<div class="menuItems">
 		   	<span id="checkBoxSpn">
@@ -140,32 +176,46 @@
     	</div>
     	<div class="menuItems">
 		   	<form name="fileUpload" method="post" action="fileUpload.do" enctype="multipart/form-data">
-		   		<input type="hidden" name="path" value="">
-		   		<label for="file" id="fileLabel" class="btn">파일 올리기</label>
+		   		<label for="file" class="btn fileLabel">파일 올리기</label>
 		   		<input type="file" multiple="multiple" name="files" id="file">
+		   		<input type="hidden" name="path" value="${inPath }">
 		   	</form>
 		   	<form name="fileDownload" method="post" action="fileDownload.do">
-		   		<input type="hidden" name="path" value="">
-		   		<input type="hidden" name="fileName">
-		   		<input type="button" id="downBtn" class="btn" value="내려받기">
+		   		<input type="hidden" name="path">
+		   		<label for="download" id="downBtn" class="btn fileLabel">내려받기</label>
+		   		<input type="hidden" id="download">
+		   	</form>
+		</div>
+    	<div class="menuItems">
+		   	<form name="folderUpload" method="post" action="folderUpload.do" enctype="multipart/form-data">
+		   		<label for="folder" class="btn fileLabel">폴더 올리기</label>
+		   		<input type="file" multiple="multiple" name="folders" id="folder" webkitdirectory>
+		   		<input type="hidden" name="path" value="${inPath }">
 		   	</form>
 		</div>
 		<div class="menuItems">
-	    	<form name="makeFolder" method="post" action="makeFolder.do">	
-		    	<input type="hidden" name="path" value="">
+	    	<form name="makeFolder" method="post" action="makeFolder.do">
+		    	<input type="hidden" name="path">
 		        <input type="submit" id="mkBtn" class="btn" value="폴더 생성">
 	    	</form>
 	    	<form name="deleteFile" method="post" action="deleteFile.do">
-		    	<input type="hidden" name="path" value="">
 		    	<input type="hidden" name="checked">
 		        <input type="button" id="delBtn" class="btn" value="선택 삭제">
 	    	</form>
     	</div>
 		<div class="menuItems">
 	    	<form name="enterFolder" method="post" action="disk.do">
-		    	<input type="text" name="inPath">
+		    	<input type="hidden" name="inPath">
 	    	</form>
     	</div>
+    </div>
+    <div id="statusDiv">
+    	<span id="statusSpn1"></span>
+	    <span id="statusSpn2">개 항목 선택 됨</span>
+    </div>
+    <div id="pathDiv">
+    	<a href="disk.do">HOME</a>
+    	${parentTag }
     </div>
     <c:if test="${empty list }">
     <div id="contentDiv">
@@ -175,43 +225,39 @@
     </div>
     </c:if>
     <c:if test="${!empty list }">
-    <div id="pathDiv">
-    	<a href="disk.do">HOME</a>
-    	${parentTag }
-    </div>
-    <div id="statusDiv">
-    	<span id="statusSpn1"></span>
-	    <span id="statusSpn2">개 항목 선택 됨</span>
-    </div>
     <div id="contentDiv">
     <c:forEach var="vo" items="${list }">
         <div class="content">
 		    <c:set var="name" value="${vo.name }" />
 		   	<c:set var="nameLeng" value="${fn:length(vo.name) }" />
-		   	<c:if test="${nameLeng >= 11 }">
-				<c:set var="name" value="${fn:substring(name, 0, 11) }···" />
+		   	<c:if test="${nameLeng >= 23 }">
+				<c:set var="name" value="${fn:substring(name, 0, 23) }···" />
 			</c:if>
-        	<div class="checkDiv">
-        		<input type="checkBox" name="checkBox" class="checkBox" value="${vo.name }">
-        	</div>
-	        <div class="innerDIv" title="${vo.name }" onclick="
-		        <c:if test="${vo.type == 'folder' }">inFolder('${vo.name}', '${vo.type }', '${vo.path }');</c:if>
-		        <c:if test="${vo.type == 'file' }">download('${vo.name}', '${vo.type }');</c:if>">
-	        	<div class="fileImg">
-	            	<img src="${path }/img/${vo.type }.png">
-	            </div>
+			<div class="contentAttr" title="${vo.name }" id="contentAttr${vo.no }">
+	        	<div class="checkDiv" id="checkDiv${vo.no }">
+	       			<input type="checkBox" name="checkBox" class="checkBox" id="check${vo.no }" value="${vo.path }">
+	       		</div>
+		        <div class="innerDiv" onclick="
+	            	<c:if test="${vo.type == 'folder' }">inFolder('${vo.name}', '${vo.type }', '${vo.path }');</c:if>
+			        <c:if test="${vo.type != 'folder' }">download('${vo.path}');</c:if>">
+		        	<div class="fileImg">
+		            	<img src="${path }/img/${vo.type }.png">
+		            </div>
+		        </div>
+			</div>
+			<div class="infoDiv">
 	            <div class="fileName">
 	                <span class="nameSpn">${name }</span>
 	            </div>
 	            <div class="fileSize">
 	                <span class="fileSizeSpn">
-	                <c:if test="${vo.type == 'file'}">
+	                <c:if test="${vo.type != 'folder' }">
 	                	${vo.size }
 	                	${vo.sizeType }
 	                </c:if>
 	                </span>
 	            </div>
-	        </div>
+			</div>
         </div>
     </c:forEach>
     </div>

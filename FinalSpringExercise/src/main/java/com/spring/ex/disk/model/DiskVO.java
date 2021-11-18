@@ -2,6 +2,7 @@ package com.spring.ex.disk.model;
 
 public class DiskVO {
 
+	private int no; // 파일 번호
 	private String name; // 파일 이름
 	private String type; // 파일 타입
 	private double size; // 파일 사이즈
@@ -10,6 +11,15 @@ public class DiskVO {
 	private String path; // 경로
 	private String upPath; // 부모 경로
 	private String upName; // 부모 이름
+	private String extension; // 확장자
+
+	public int getNo() {
+		return no;
+	}
+
+	public void setNo(int no) {
+		this.no = no;
+	}
 
 	public String getName() {
 		return name;
@@ -75,10 +85,19 @@ public class DiskVO {
 		this.upName = upName;
 	}
 
+	public String getExtension() {
+		return extension;
+	}
+
+	public void setExtension(String extension) {
+		this.extension = extension;
+	}
+
 	@Override
 	public String toString() {
-		return "DiskVO [name=" + name + ", type=" + type + ", size=" + size + ", sizeType=" + sizeType + ", lastMod="
-				+ lastMod + ", path=" + path + ", upPath=" + upPath + ", upName=" + upName + "]";
+		return "DiskVO [no=" + no + ", name=" + name + ", type=" + type + ", size=" + size + ", sizeType=" + sizeType
+				+ ", lastMod=" + lastMod + ", path=" + path + ", upPath=" + upPath + ", upName=" + upName
+				+ ", extension=" + extension + "]";
 	}
 
 }

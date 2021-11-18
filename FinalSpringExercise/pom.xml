@@ -80,6 +80,13 @@
 			<version>2.4</version>
 		</dependency>
 
+		<!-- Zip Utility -->
+		<dependency>
+			<groupId>org.zeroturnaround</groupId>
+			<artifactId>zt-zip</artifactId>
+			<version>1.13</version>
+		</dependency>
+
 		<!-- Spring Library -->
 		<dependency>
 			<groupId>org.springframework</groupId>

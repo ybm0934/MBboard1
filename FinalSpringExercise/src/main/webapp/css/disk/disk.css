@@ -1,4 +1,10 @@
 @charset "UTF-8";
+@font-face {
+    font-family: 'GmarketSansMedium';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
 
 body {
     -webkit-touch-callout: none;
@@ -8,35 +14,67 @@ body {
     -webkit-user-select: none;
     margin: 0 auto;
     padding: 0;
+    font-family: 'GmarketSansMedium';
 }
 
 img {
     image-rendering: auto;
 }
 
-#wrap {
-    margin: 30px;
+a {
+	text-decoration: none;
 }
 
-#titleDiv {}
+#titleDiv {
+	background-color: #1e8cfa;
+	padding: 20px;
+	text-align: center;
+}
 
-#titleDiv h1 {}
+#titleDiv a {
+	color: white;
+	font-size: 3em;
+	font-weight: bold;
+}
+
+#wrap {
+    margin: 0 auto;
+    width: 70%;
+    min-width: 800px;
+}
+
+#loginDiv {
+	text-align: right;
+	margin: 20px 0;
+	color: gray;
+}
+
+#loginDiv a {
+	color: gray;
+	margin-left: 5px;
+	margin-right: 5px;
+}
+
+#loginDiv a:hover {
+	color: orange;
+}
 
 #menuDiv {
     margin-top: 15px;
     margin-bottom: 15px;
+    overflow: hidden;
 }
 
 .menuItems {
 	display: inline-block;
-	margin-right: 10px;
 }
 
 #checkBoxSpn  {
-	padding: 8px;
+	padding: 10px;
 	border: 1px solid lightgray;
 	background-color: #efefef;
 	text-align: center;
+	margin-right: 5px;
 }
 
 #checkBoxSpn:hover {
@@ -48,50 +86,35 @@ img {
     padding: 10px;
     cursor: pointer;
     outline: none;
+    font-family: 'GmarketSansMedium';
 }
 
-#fileLabel {
+.fileLabel {
 	border: 1px solid #1e8cfa;
     background-color: #1e8cfa;
     color: white;
     font-size: 0.8em;
-    padding: 11px 30px;
+    padding: 15px 30px;
 }
 
-#fileLabel:hover {
+.fileLabel:hover {
 	border: 1px solid #0172d5;
     background-color: #0172d5;
 }
 
-#fileLabel:active {
+.fileLabel:active {
 	border: 1px solid #1e8cfa;
     background-color: #1e8cfa;
 }
 
-#file {
+#file, #folder {
 	display: none;
-}
-
-#downBtn {
-	border: 1px solid #1e8cfa;
-    background-color: #1e8cfa;
-    color: white;
-    width: 130px;
-}
-
-#downBtn:hover {
-	border: 1px solid #0172d5;
-    background-color: #0172d5;
-}
-
-#downBtn:active {
-	border: 1px solid #1e8cfa;
-    background-color: #1e8cfa;
 }
 
 #mkBtn {
 	border: 1px solid #feb343;
     background-color: #feb343;
+    vertical-align: middle;
 }
 
 #mkBtn:hover {
@@ -120,8 +143,7 @@ img {
 }
 
 #statusDiv {
-	margin-top: 15px;
-	margin-left: 15px;
+	margin: 20px 20px 20px 0;
 }
 
 #statusSpn1 {
@@ -134,15 +156,20 @@ img {
 
 #pathDiv {
     padding: 15px;
-    border: 1px solid gray;
+    border: 1px solid lightgray;
+    letter-spacing: 2px;
 }
 
 #pathDiv a {
-    color: gray;
+    color: black;
     text-decoration: none;
 }
 
 #pathDiv a:hover {
+    text-decoration: underline;
+}
+
+#pathDiv a:active {
     font-weight: bold;
 }
 
@@ -153,53 +180,69 @@ img {
 
 .noSpn {
 	color: gray;
+	font-size: 1.3em;
 }
 
 #contentDiv {
-    border: 1px solid gray;
+    border: 1px solid #e9e9e9;
     padding: 30px;
+    background-color: #f9f9f9;
 }
 
-
 .content {
-	min-width: 140px;
-	min-height: 152px;
+	min-width: 150px;
+	max-width: 150px;
+	min-height: 225px;
 	margin: 5px;
-	border: 1px solid lightgray;
 	display: inline-block;
-	cursor: pointer;
 	vertical-align: middle;
+}
+
+.contentAttr {
+	border: 1px solid #80c3fd;
+	background-color: white;
+	cursor: pointer;
+}
+
+.contentAttr:hover {
+	border: 1px solid #2f9dfc;
+	background-color: #80c3fd;
+}
+
+.contentAttr:active {
+	background-color: white;
 }
 
 .checkDiv {
 	visibility: hidden;
-}
-
-.innerDIv {
-	text-align: center;
-    vertical-align: middle;
-	padding: 10px;
-	overflow: hidden;
-}
-
-.content:hover {
-    background-color: #efefef;
-}
-
-.content:active {
-    background-color: white;
+	text-align: left;
 }
 
 .checkBox {}
 
+.innerDiv {
+	text-align: center;
+    vertical-align: middle;
+	overflow: hidden;
+}
+
+.infoDiv {
+	text-align: center;
+}
+
 .fileImg {}
 
 .fileImg img {
-    width: 50px;
+    width: 60px;
+    margin-top: 20px;
+    margin-bottom: 30px;
+    position: relative;
 }
 
 .fileName {
-    margin: 5px;
+    margin-top: 15px;
+    font-size: 0.8em;
+    word-break: break-word;
 }
 
 .nameSpn {}

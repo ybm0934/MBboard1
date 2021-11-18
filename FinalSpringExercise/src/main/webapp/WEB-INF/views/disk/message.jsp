@@ -2,5 +2,5 @@
     pageEncoding="UTF-8"%>
 <script>
 	alert('파일이 존재하지 않습니다.');
-	location.reload();
+	location.href = 'disk.do';
 </script>
