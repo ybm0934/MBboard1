@@ -86,6 +86,13 @@
 			<artifactId>zt-zip</artifactId>
 			<version>1.13</version>
 		</dependency>
+		
+		<!-- Web Socket -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-websocket</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
 
 		<!-- Spring Library -->
 		<dependency>

@@ -30,10 +30,18 @@ public class DiskController {
 
 	private static final String MYID = "admin";
 	private String fixPath = Utility.PATH + MYID + "/";
+	private AES256 aes256;
 	private StringBuffer sb;
 
+	public DiskController() {
+		aes256 = new AES256();
+	}
+
 	@RequestMapping("/disk.do")
-	public String diskList(@RequestParam(value = "inPath", defaultValue = "") String inPath, Model model) {
+	public String diskList(@RequestParam(value = "inPath", defaultValue = "") String inPath, Model model)
+			throws Exception {
+		inPath = aes256.decrypt(inPath); // 경로 복호화
+
 		if (inPath.equals(""))
 			inPath = fixPath;
 
@@ -101,12 +109,18 @@ public class DiskController {
 			path = path.replace("\\", "/");
 			String extension = path.substring(path.lastIndexOf("."), path.length() - 1);
 			extension = extension.toLowerCase();
-			String img = ".ai .bmp .gif .jpg .jpeg .jpe .jfif .jp2 .j2c .pcx .psd .png .tga .taga .tif .ico";
+			String img = ".ai .bmp .gif .jpg .jpeg .jpe .jfif .jp2 .j2c .pcx .psd .png .tga .taga .tif .tiff .ico";
+			String audio = ".mp3 .flac .aac .wav .aiff .ogg .wma .au .mid";
 			String video = ".webm .mkv .flv .avi .mts .m2ts .ts .mov .wmv .rm .rmvb .asf .amv .mp4 .m4p .m4v .mpg .mp2 .mpeg .mpe .mpv .svi .3gp .f4v .f4p .f4a .f4b";
+			String doc = ".doc .docm .docx .rtf .txt .hwp";
 			if (img.contains(extension)) {
 				type = "img";
+			} else if (audio.contains(extension)) {
+				type = "audio";
 			} else if (video.contains(extension)) {
 				type = "video";
+			} else if (doc.contains(extension)) {
+				type = "doc";
 			} else if (extension.equals(".pdf")) {
 				type = "pdf";
 			} else if (extension.equals(".ppt") || extension.equals(".pptx")) {
@@ -116,7 +130,7 @@ public class DiskController {
 			} else if (extension.equals(".zip")) {
 				type = "zip";
 			} else {
-				type = "doc";
+				type = "file";
 			}
 
 			DiskVO diskVo = new DiskVO();
@@ -136,6 +150,7 @@ public class DiskController {
 		String parentTag = parentPath(file);
 
 		inPath = inPath.replace("\\", "/");
+		inPath = aes256.encrypt(inPath); // 경로 암호화
 
 		model.addAttribute("list", list);
 		model.addAttribute("inPath", inPath);
@@ -145,11 +160,31 @@ public class DiskController {
 	}
 
 	// 부모 경로 구하기
-	public String parentPath(File folder) {
+	public String parentPath(File folder) throws Exception {
 		String path = folder.getPath();
+		System.out.println("path : " + path);
+		/*
+		 * 
+		 * 
+		 * 
+		 * 
+		 * 
+		 * 
+		 * 
+		 * 
+		 * 
+		 * 
+		 * 
+		 * 
+		 * 
+		 * 
+		 */
 		String pathName = folder.getName();
+		System.out.println("pathName : " + pathName);
 		String prPath = folder.getParentFile().getPath();
+		System.out.println("prPath : " + prPath);
 		path = path.replace("\\", "/") + "/";
+		path = aes256.encrypt(path);
 		prPath = prPath.replace("\\", "/") + "/";
 
 		if ((fixPath.length() < path.length())) {
@@ -163,33 +198,40 @@ public class DiskController {
 	}
 
 	@RequestMapping("/makeFolder.do")
-	public String makeFolder(@RequestParam(value = "path", defaultValue = "") String path,
-			RedirectAttributes redirect) {
-		System.out.println("폴더 만들기 실행");
-		System.out.println("path : " + path);
+	public String makeFolder(@RequestParam(value = "path", defaultValue = "") String path, RedirectAttributes redirect)
+			throws Exception {
+		path = aes256.decrypt(path);
 
 		if (path.equals(""))
 			path = fixPath;
 
 		String folderName = "새 폴더";
 		File folder = new File(path + folderName);
-
+		boolean bool = false;
 		if (!folder.exists()) {
-			folder.mkdir();
-			System.out.println("폴더를 생성하였습니다.");
+			Thread.sleep(1000); // 1초 지연
+			bool = folder.mkdir();
 		} else {
 			int cnt = 0;
 			while (true) {
 				folderName = "새 폴더 (" + ++cnt + ")";
 				folder = new File(path + folderName);
 				if (!folder.exists()) {
-					folder.mkdir();
+					bool = folder.mkdir();
 					break;
 				}
 			}
-			System.out.println("이미 폴더명이 존재하여 새 폴더명을 정의합니다.");
+			if (bool == true)
+				System.out.println("이미 폴더명이 존재하여 새 폴더명을 정의합니다.");
 		}
 
+		if (bool == true) {
+			System.out.println("폴더를 생성하였습니다.");
+		} else {
+			System.out.println("폴더 생성에 실패하였습니다.");
+		}
+
+		path = aes256.encrypt(path);
 		redirect.addAttribute("inPath", path);
 
 		return "redirect:/disk.do";
@@ -197,10 +239,11 @@ public class DiskController {
 
 	@RequestMapping("/fileUpload.do")
 	public String fileUpload(@RequestParam("path") String path, @RequestParam("files") MultipartFile[] files,
-			RedirectAttributes redirect) throws IOException {
+			RedirectAttributes redirect) throws Exception {
 		System.out.println("파일 업로드 실행");
-		System.out.println("path : " + path);
 		System.out.println("files.length " + files.length);
+
+		path = aes256.decrypt(path);
 
 		if (path.equals(""))
 			path = fixPath;
@@ -224,6 +267,7 @@ public class DiskController {
 				fos.close();
 		}
 
+		path = aes256.encrypt(path);
 		redirect.addAttribute("inPath", path);
 
 		return "redirect:/disk.do";
@@ -234,21 +278,41 @@ public class DiskController {
 		System.out.println("folderUpload 실행");
 		System.out.println("length : " + files.length);
 		for (int i = 0; i < files.length; i++) {
+			/*
+			 * 
+			 * 
+			 * 
+			 * 
+			 * 
+			 * 
+			 * 
+			 * 
+			 */
 		}
 
 		return "redirect:/disk.do";
 	}
 
 	@RequestMapping("/deleteFile.do")
-	public String getDelete(@RequestParam("checked") String checked, RedirectAttributes redirect) {
+	public String getDelete(@RequestParam(value = "checked", defaultValue = "") String checked,
+			RedirectAttributes redirect, Model model) throws Exception {
+		// deleteFile 재귀 함수로 인한 복호화 불가능으로 사전 복호화 후 다시 바인딩 작업
+		String[] checkList = checked.split(">"); // join 해제
+		for (int i = 0; i < checkList.length; i++) {
+			checkList[i] = aes256.decrypt(checkList[i]); // 파라미터 복호화
+		}
+		checked = String.join(">", checkList); // 다시 바인딩
+
 		Map<Boolean, String> map = deleteFile(checked);
 
 		String defaultUrl = "redirect:/disk.do";
 		for (boolean bool : map.keySet()) {
 			String url = map.get(bool);
 			if (bool == true) {
+				url = aes256.encrypt(url);
 				redirect.addAttribute("inPath", url);
 			} else {
+				model.addAttribute("msg", "파일이 존재하지 않습니다.");
 				defaultUrl = url;
 			}
 		}
@@ -256,8 +320,8 @@ public class DiskController {
 		return defaultUrl;
 	}
 
-	//
-	public Map<Boolean, String> deleteFile(String checked) {
+	// 파일 세부 삭제
+	public Map<Boolean, String> deleteFile(String checked) throws Exception {
 		Map<Boolean, String> map = new HashMap<Boolean, String>();
 		String[] checkList = checked.split(">");
 		File file = null;
@@ -268,13 +332,10 @@ public class DiskController {
 				file = new File(checkList[j]);
 				if (file.exists()) {
 					if (file.isFile()) {
-						System.out.println("file 삭제 실행");
 						file.delete();
 					} else {
-						System.out.println("folder 삭제 실행");
 						File[] files = file.listFiles();
 						if (files.length != 0) {
-							System.out.println("하부 파일 삭제 실행");
 							for (int i = 0; i < files.length; i++) {
 								if (files[i].isDirectory()) {
 									deleteFile(files[i].getPath());
@@ -306,10 +367,8 @@ public class DiskController {
 	}
 
 	@RequestMapping("/fileDownload.do")
-	public String download(@RequestParam(value = "path", defaultValue = "") String path, Model model) {
-		System.out.println("다운로드 요청");
-		System.out.println("path : " + path);
-
+	public String download(@RequestParam(value = "path", defaultValue = "") String path, Model model) throws Exception {
+		path = aes256.decrypt(path);
 		File file = new File(path);
 		String url = "";
 		if (file.isFile()) {
@@ -344,13 +403,10 @@ public class DiskController {
 
 	// 폴더 다운로드 (압축)
 	public String folderDownload(String path, Model model) {
-		System.out.println("폴더 다운로드 요청");
-		System.out.println("path : " + path);
-
 		if (path.equals(""))
 			path = fixPath;
 
-		String tempPath = "D:/Lecture/webFolder/" + MYID + "_temp/"; // 압축 파일 임시 저장 경로
+		String tempPath = Utility.PATH + MYID + "_temp/"; // 압축 파일 임시 저장 경로
 		File file = new File(tempPath);
 		File[] files = file.listFiles();
 		if (files.length > 0) {
