@@ -1,0 +1,139 @@
+@charset "UTF-8";
+@font-face {
+    font-family: 'GmarketSansMedium';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/GmarketSansMedium.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    -webkit-touch-callout: none;
+    user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -webkit-user-select: none;
+    margin: 0 auto;
+    background-image: url('../../img/pexels-rostislav-uzunov-5011647.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
+    min-width: 1280px;
+    width: 70%;
+    font-family: 'GmarketSansMedium';
+}
+
+img {
+    image-rendering: auto;
+}
+
+#wrap {
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    height: 100vh;
+}
+
+.intro {
+    width: 100%;
+    margin: 0 auto;
+    text-align: center;
+    padding: 30px;
+}
+
+#introInner1 {
+    color: white;
+}
+
+#introInner1 h1 {
+    font-size: 1.3em;
+    letter-spacing: 2px;
+}
+
+#firp {
+    font-size: 2.7em;
+    font-weight: bold;
+}
+
+#secp {
+    font-size: 1em;
+}
+
+#introInner2 {
+    margin-top: 80px;
+    text-align: center;
+}
+
+#regitBtn {
+    border: 2px solid white;
+    color: white;
+    padding: 15px 50px;
+    background-color: rgba(0, 0, 0, 0);
+    cursor: pointer;
+    font-size: 1em;
+    font-family: 'GmarketSansMedium';
+}
+
+#regitBtn:hover {
+    background-color: white;
+    color: black;
+    transition: 0.7s;
+}
+
+#regitBtn:active {
+    background-color: rgba(0, 0, 0, 0);
+    color: white;
+}
+
+#loginDiv {}
+
+.textarea {
+    background-color: white;
+    border: 1px solid white;
+    margin: 15px;
+    padding: 10px;
+    text-align: left;
+    border-radius: 25px;
+}
+
+.idimg {
+    width: 25px;
+    vertical-align: middle;
+    margin-left: 15px;
+}
+
+.textbox {
+    border: 0;
+    width: 70%;
+    box-sizing: border-box;
+    outline: none;
+    margin-left: 15px;
+    letter-spacing: 5px;
+    font-size: 1em;
+    font-family: 'GmarketSansMedium';
+}
+
+.btnDiv {
+    margin-top: 50px;
+}
+
+#loginBtn {
+    border: 2px solid white;
+    color: white;
+    padding: 15px 50px;
+    background-color: rgba(0, 0, 0, 0);
+    cursor: pointer;
+    font-size: 1em;
+    font-family: 'GmarketSansMedium';
+}
+
+#loginBtn:hover {
+    background-color: white;
+    color: black;
+    transition: 0.7s;
+}
+
+#loginBtn:active {
+    background-color: rgba(0, 0, 0, 0);
+    color: white;
+}

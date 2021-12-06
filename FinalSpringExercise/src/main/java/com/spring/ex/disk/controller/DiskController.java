@@ -22,18 +22,19 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.zeroturnaround.zip.ZipUtil;
 
-import com.spring.ex.common.Utility;
 import com.spring.ex.disk.model.DiskVO;
 
 @Controller
 public class DiskController {
 
+	// public static final String PATH = "G:/예병민/webFolder/";
+	public static final String PATH = "D:/Lecture/webFolder/";
 	private static final String MYID = "admin";
-	private String fixPath = Utility.PATH + MYID + "/";
+	private String fixPath = PATH + MYID + "/";
 	private AES256 aes256;
 	private StringBuffer sb;
 
-	public DiskController() {
+	public DiskController() throws Exception {
 		aes256 = new AES256();
 	}
 
@@ -75,8 +76,10 @@ public class DiskController {
 			String lastMod = sdf.format(mod);
 			String path = folders.get(i).getPath() + "/";
 			path = path.replace("\\", "/");
+			path = aes256.encrypt(path);
 			String upPath = folders.get(i).getParentFile().getPath() + "/";
 			upPath = upPath.replace("\\", "/");
+			upPath = aes256.encrypt(upPath);
 			String upName = folders.get(i).getParentFile().getName();
 
 			DiskVO diskVo = new DiskVO();
@@ -96,7 +99,7 @@ public class DiskController {
 			String type = "file";
 			Double size = (double) (Math.round((files.get(i).length() / 1024.0 / 1024.0 / 1024.0 * 100)) / 100.0);
 			String sizeType = "GB";
-			if (size < 0.1) {
+			if (size < 0.1 && size >= 0.01) {
 				size = (double) (Math.round((files.get(i).length() / 1024.0 / 1024.0 * 100)) / 100.0);
 				sizeType = "MB";
 			} else if (size < 0.01) {
@@ -107,31 +110,38 @@ public class DiskController {
 			String lastMod = sdf.format(mod);
 			String path = files.get(i).getPath() + "/";
 			path = path.replace("\\", "/");
-			String extension = path.substring(path.lastIndexOf("."), path.length() - 1);
-			extension = extension.toLowerCase();
-			String img = ".ai .bmp .gif .jpg .jpeg .jpe .jfif .jp2 .j2c .pcx .psd .png .tga .taga .tif .tiff .ico";
-			String audio = ".mp3 .flac .aac .wav .aiff .ogg .wma .au .mid";
-			String video = ".webm .mkv .flv .avi .mts .m2ts .ts .mov .wmv .rm .rmvb .asf .amv .mp4 .m4p .m4v .mpg .mp2 .mpeg .mpe .mpv .svi .3gp .f4v .f4p .f4a .f4b";
-			String doc = ".doc .docm .docx .rtf .txt .hwp";
-			if (img.contains(extension)) {
-				type = "img";
-			} else if (audio.contains(extension)) {
-				type = "audio";
-			} else if (video.contains(extension)) {
-				type = "video";
-			} else if (doc.contains(extension)) {
-				type = "doc";
-			} else if (extension.equals(".pdf")) {
-				type = "pdf";
-			} else if (extension.equals(".ppt") || extension.equals(".pptx")) {
-				type = "ppt";
-			} else if (extension.equals(".xls")) {
-				type = "xls";
-			} else if (extension.equals(".zip")) {
-				type = "zip";
-			} else {
-				type = "file";
+			String upPath = files.get(i).getParentFile().getPath() + "/";
+			upPath = upPath.replace("\\", "/");
+			String extension = "";
+			if (path.lastIndexOf(".") >= 0) {
+				extension = path.substring(path.lastIndexOf("."), path.length() - 1); // 슬래시 제외 확장자만 가져오기
+				extension = extension.toLowerCase();
+				String img = ".ai .bmp .gif .jpg .jpeg .jpe .jfif .jp2 .j2c .pcx .psd .png .tga .taga .tif .tiff .ico";
+				String audio = ".mp3 .flac .aac .wav .aiff .ogg .wma .au .mid";
+				String video = ".webm .mkv .flv .avi .mts .m2ts .ts .mov .wmv .rm .rmvb .asf .amv .mp4 .m4p .m4v .mpg .mp2 .mpeg .mpe .mpv .svi .3gp .f4v .f4p .f4a .f4b";
+				String doc = ".doc .docm .docx .rtf .txt .hwp";
+				if (img.contains(extension)) {
+					type = "img";
+				} else if (audio.contains(extension)) {
+					type = "audio";
+				} else if (video.contains(extension)) {
+					type = "video";
+				} else if (doc.contains(extension)) {
+					type = "doc";
+				} else if (extension.equals(".pdf")) {
+					type = "pdf";
+				} else if (extension.equals(".ppt") || extension.equals(".pptx")) {
+					type = "ppt";
+				} else if (extension.equals(".xls")) {
+					type = "xls";
+				} else if (extension.equals(".zip")) {
+					type = "zip";
+				} else {
+					type = "file";
+				}
 			}
+			path = aes256.encrypt(path);
+			upPath = aes256.encrypt(upPath);
 
 			DiskVO diskVo = new DiskVO();
 			diskVo.setNo(no++);
@@ -141,6 +151,7 @@ public class DiskController {
 			diskVo.setSizeType(sizeType);
 			diskVo.setLastMod(lastMod);
 			diskVo.setPath(path);
+			diskVo.setUpPath(upPath);
 			diskVo.setExtension(extension);
 
 			list.add(diskVo);
@@ -162,33 +173,13 @@ public class DiskController {
 	// 부모 경로 구하기
 	public String parentPath(File folder) throws Exception {
 		String path = folder.getPath();
-		System.out.println("path : " + path);
-		/*
-		 * 
-		 * 
-		 * 
-		 * 
-		 * 
-		 * 
-		 * 
-		 * 
-		 * 
-		 * 
-		 * 
-		 * 
-		 * 
-		 * 
-		 */
 		String pathName = folder.getName();
-		System.out.println("pathName : " + pathName);
 		String prPath = folder.getParentFile().getPath();
-		System.out.println("prPath : " + prPath);
 		path = path.replace("\\", "/") + "/";
-		path = aes256.encrypt(path);
 		prPath = prPath.replace("\\", "/") + "/";
-
+		String aesPath = aes256.encrypt(path);
 		if ((fixPath.length() < path.length())) {
-			sb.insert(0, " &gt; <a href=\"#\" onclick=\"upFolder('" + path + "')\">" + pathName + "</a>");
+			sb.insert(0, " &gt; <a href=\"#\" onclick=\"upFolder('" + aesPath + "')\">" + pathName + "</a>");
 
 			File file = new File(prPath);
 			parentPath(file);
@@ -269,26 +260,6 @@ public class DiskController {
 
 		path = aes256.encrypt(path);
 		redirect.addAttribute("inPath", path);
-
-		return "redirect:/disk.do";
-	}
-
-	@RequestMapping("/folderUpload.do")
-	public String folderUpload(File[] files) {
-		System.out.println("folderUpload 실행");
-		System.out.println("length : " + files.length);
-		for (int i = 0; i < files.length; i++) {
-			/*
-			 * 
-			 * 
-			 * 
-			 * 
-			 * 
-			 * 
-			 * 
-			 * 
-			 */
-		}
 
 		return "redirect:/disk.do";
 	}
@@ -406,7 +377,7 @@ public class DiskController {
 		if (path.equals(""))
 			path = fixPath;
 
-		String tempPath = Utility.PATH + MYID + "_temp/"; // 압축 파일 임시 저장 경로
+		String tempPath = PATH + MYID + "_temp/"; // 압축 파일 임시 저장 경로
 		File file = new File(tempPath);
 		File[] files = file.listFiles();
 		if (files.length > 0) {
@@ -473,6 +444,35 @@ public class DiskController {
 		} // if
 
 		return url;
+	}
+
+	// 파일 이름 변경
+	@RequestMapping("/editFileName.do")
+	public String editFileName(@RequestParam("path") String path,
+			@RequestParam(value = "upPath", defaultValue = "") String upPath, @RequestParam("editName") String editName,
+			RedirectAttributes redirect) throws Exception {
+		System.out.println("파일명 변경");
+		System.out.println("editName : " + editName);
+
+		path = aes256.decrypt(path);
+		upPath = aes256.decrypt(upPath);
+		System.out.println("path : " + path);
+		System.out.println("upPath : " + upPath);
+
+		if (upPath.equals("")) {
+			upPath = fixPath;
+		}
+
+		File file = new File(path);
+		boolean result = file.renameTo(new File(upPath + editName));
+		System.out.println("result : " + result);
+
+		path = aes256.encrypt(path);
+		upPath = aes256.encrypt(upPath);
+
+		redirect.addAttribute("inPath", upPath);
+
+		return "redirect:/disk.do";
 	}
 
 }

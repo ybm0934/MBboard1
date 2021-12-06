@@ -10,6 +10,6 @@
 	</settings>
 	<mappers>
 		<mapper resource="/config/mybatis/mapper/board.xml" />
-		<mapper resource="/config/mybatis/mapper/disk.xml" />
+		<mapper resource="/config/mybatis/mapper/member.xml" />
 	</mappers>
 </configuration>

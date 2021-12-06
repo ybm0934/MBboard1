@@ -1,0 +1,11 @@
+drop table member;
+create table member(
+    no number primary key,
+    userid varchar2(30) unique,
+    pwd varchar2(30),
+    grade varchar2(10),
+    volume number
+);
+
+drop sequence member;
+create sequence member_seq;

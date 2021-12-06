@@ -40,7 +40,7 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>dispatcher2</servlet-name>
-		<url-pattern>/</url-pattern>
+		<url-pattern>/</url-pattern> 경로 겹치지 않게 수정해야함
 	</servlet-mapping>
  -->
 	<filter>

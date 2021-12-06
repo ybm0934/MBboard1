@@ -13,7 +13,7 @@
 	
 	<!-- Utility -->
 	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
-		<property name="maxUploadSize" value="536870912" /> <!-- 500MB -->
+		<property name="maxUploadSize" value="2147483648" /> <!-- 2GB -->
 		<property name="defaultEncoding" value="UTF-8" />
 	</bean>
 	<bean id="downloadView" class="com.spring.ex.disk.model.DownloadView" />
@@ -33,12 +33,15 @@
 	<context:component-scan base-package="com.spring.ex.controller" />
 	<context:component-scan base-package="com.spring.ex.board.controller" />
 	<context:component-scan base-package="com.spring.ex.disk.controller" />
+	<context:component-scan base-package="com.spring.ex.member.controller" />
 
 	<!-- Model -->
 	<bean id="boardDao" class="com.spring.ex.board.model.BoardDAOImpl" />
 	<bean id="diskDao" class="com.spring.ex.disk.model.DiskDAOImpl" />
+	<bean id="memberDao" class="com.spring.ex.member.model.MemberDAOImpl" />
 	
 	<!-- Service -->
 	<bean id="boardService" class="com.spring.ex.board.model.BoardServiceImpl" />
+	<bean id="memberService" class="com.spring.ex.member.model.MemberServiceImpl" />
 	
 </beans>

@@ -7,7 +7,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>::YBM Web Folder::</title>
+    <title>:: YBM Web Folder ::</title>
     <link rel="stylesheet" href="${path }/css/disk/disk.css">
     <script src="${path }/lib/jquery-3.6.0.min.js"></script>
     <script>
@@ -21,11 +21,6 @@
     			if($(this).val() != '') {
     				$('form[name=fileUpload]').submit();
     			}
-    		});
-    		
-    		// 폴더 업로드
-    		$('#folder').change(function(){
-    			$('form[name=folderUpload]').submit();
     		});
     		
     		// 폴더 생성
@@ -125,11 +120,11 @@
     			}
     		});
     		
-    		// 선택 개별 다운로드
+    		// 선택 다운로드
     		$('#downBtn').click(function(){
     			$('.checkBox:checked').each(function(i){
 					setTimeout(function() {
-	    				const frm = $('<iframe src="fileDownload.do?path=' + $('.checkBox:checked').eq(i).val() + '" style="display: none;" />');
+	    				const frm = $('<iframe src="fileDownload.do?path=' + encodeURIComponent($('.checkBox:checked').eq(i).val()) + '" style="display: none;" />');
 	    				frm.appendTo('body');
 					}, 300 * (i + 1));
     			});
@@ -144,7 +139,7 @@
    		}
     	
     	// 폴더 안으로 이동
-    	function inFolder(folderName, type, path, upPath) {
+    	function inFolder(type, path) {
     		if(type == 'folder') {
     			document.enterFolder.inPath.value = path;
     			document.enterFolder.submit();
@@ -155,6 +150,64 @@
     	function upFolder(upPath) {
     		document.enterFolder.inPath.value = upPath;
     		document.enterFolder.submit();
+    	}
+    	
+    	// 폴더명 변경 이미지 보이기
+    	function editView(no) {
+    		$(document).ready(function(){
+	    		$('#editName' + no).css('display', 'inline');
+    		});
+    	}
+    	
+    	// 폴더명 변경 이미지 숨기기
+    	function editClose(no) {
+    		$(document).ready(function(){
+   				$('#editName' + no).css('display', 'none');
+    		});
+    	}
+    	
+    	// 폴더명 밑줄 On
+    	function editLineOn(no) {
+    		$(document).ready(function(){
+    			$('#fileName' + no).css('text-decoration', 'underline');
+    		});
+    	}
+    	
+    	// 폴더명 밑줄 Off
+    	function editLineOff(no) {
+    		$(document).ready(function(){
+    			$('#fileName' + no).css('text-decoration', 'none');
+    		});
+    	}
+    	
+    	// 폴더명 변경 이벤트
+    	function reName(no, name) {
+    		$(document).ready(function(){
+    			$('#boxOn' + no).css('display', 'inline');
+    			$('#boxOff' + no).css('display', 'none');
+    			const textOn = $('#boxOn' + no).children('input[type=text]');
+    			textOn.select();
+    			
+    			$('input[name=name' + no + ']').on('keydown', function(e){
+    				if(e.keyCode == 13) {
+    					if(textOn.val().length == 0) {
+    						alert('파일명을 입력하세요.');
+    					}else {
+	    					$('#nameForm' + no).children('input[name=editName]').val(textOn.val());
+	    					$('#nameForm' + no).submit();
+    					}
+    				}else if(e.keyCode == 27) {
+    					$('#boxOn' + no).css('display', 'none');
+    	    			$('#boxOff' + no).css('display', 'inline');
+    				}
+    			});
+    			
+    			textOn.focusout(function(){
+    				textOn.val(name);
+    				$('#boxOn' + no).css('display', 'none');
+	    			$('#boxOff' + no).css('display', 'inline');
+    			});
+    		});
     	}
     </script>
 </head>
@@ -184,13 +237,6 @@
 		   		<input type="hidden" name="path">
 		   		<label for="download" id="downBtn" class="btn fileLabel">내려받기</label>
 		   		<input type="hidden" id="download">
-		   	</form>
-		</div>
-    	<div class="menuItems">
-		   	<form name="folderUpload" method="post" action="folderUpload.do" enctype="multipart/form-data">
-		   		<label for="folder" class="btn fileLabel">폴더 올리기</label>
-		   		<input type="file" multiple="multiple" name="folders" id="folder" webkitdirectory>
-		   		<input type="hidden" name="path" value="${inPath }">
 		   	</form>
 		</div>
 		<div class="menuItems">
@@ -238,7 +284,7 @@
 	       			<input type="checkBox" name="checkBox" class="checkBox" id="check${vo.no }" value="${vo.path }">
 	       		</div>
 		        <div class="innerDiv" onclick="
-	            	<c:if test="${vo.type == 'folder' }">inFolder('${vo.name}', '${vo.type }', '${vo.path }');</c:if>
+	            	<c:if test="${vo.type == 'folder' }">inFolder('${vo.type }', '${vo.path }');</c:if>
 			        <c:if test="${vo.type != 'folder' }">download('${vo.path}');</c:if>">
 		        	<div class="fileImg">
 		            	<img src="${path }/img/${vo.type }.png">
@@ -246,9 +292,22 @@
 		        </div>
 			</div>
 			<div class="infoDiv">
-	            <div class="fileName">
-	                <span class="nameSpn">${name }</span>
+	            <div class="fileName" id="fileName${vo.no }"
+	            	onmouseenter="editView('${vo.no }');" onmouseleave="editClose('${vo.no }');">
+	            	<div class="boxOn" id="boxOn${vo.no }">
+	            		<input type="text" name="name${vo.no }" class="reNameBox" value="${vo.name }" spellcheck="false">
+	            	</div>
+	            	<div class="boxOff" id="boxOff${vo.no }">
+		                <span class="nameSpn" title="${vo.name }">${name }</span>
+		                <img src="${path }/img/pen.png" id="editName${vo.no }" onclick="reName('${vo.no}', '${vo.name }');"
+		                	onmouseenter="editLineOn('${vo.no }');" onmouseleave="editLineOff('${vo.no }');" title="이름 변경">
+	            	</div>
 	            </div>
+				<form name="editFileName" id="nameForm${vo.no }" method="post" action="editFileName.do">
+					<input type="hidden" name="editName">
+					<input type="hidden" name="path" value="${vo.path }">
+					<input type="hidden" name="upPath" value="${vo.upPath }">
+                </form>
 	            <div class="fileSize">
 	                <span class="fileSizeSpn">
 	                <c:if test="${vo.type != 'folder' }">
